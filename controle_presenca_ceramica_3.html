@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aulas de Cerâmica - Dalmóbile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f0e8 0%, #ede4d3 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: slideDown 0.8s ease-out;
+    }
+    
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      color: #2c2c2c;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+    
+    .header .subtitle {
+      font-size: 1.2rem;
+      color: #8b7355;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    
+    .header .description {
+      font-size: 0.95rem;
+      color: #6b5944;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    
+    .info-banner {
+      background: linear-gradient(135deg, #d4a574 0%, #c19a6b 100%);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    
+    .info-item {
+      color: white;
+      text-align: center;
+    }
+    
+    .info-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+      margin-bottom: 0.3rem;
+    }
+    
+    .info-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: #8b7355;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #c19a6b, #d4a574);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .filter-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      background: white;
+      color: #6b5944;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    
+    .filter-btn.active {
+      background: linear-gradient(135deg, #c19a6b, #d4a574);
+      color: white;
+      box-shadow: 0 6px 16px rgba(193, 154, 107, 0.3);
+    }
+    
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .class-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      animation: slideUp 0.6s ease-out backwards;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .class-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+    }
+    
+    .class-card.full {
+      opacity: 0.75;
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, #c19a6b, #d4a574);
+      color: white;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-date-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-date {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .card-day {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+    
+    .card-time {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    
+    .card-status {
+      font-size: 0.85rem;
+      background: rgba(255,255,255,0.25);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .occupancy-section {
+      margin-bottom: 1.5rem;
+    }
+    
+    .occupancy-title {
+      font-size: 0.85rem;
+      color: #8b7355;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .occupancy-bar {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 0.75rem;
+    }
+    
+    .slot {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: #e8dcc8;
+      transition: all 0.3s;
+    }
+    
+    .slot.occupied {
+      background: linear-gradient(135deg, #a8d5ba, #7ec8a3);
+    }
+    
+    .occupancy-text {
+      font-size: 0.9rem;
+      color: #6b5944;
+      font-weight: 500;
+    }
+    
+    .presenca-section {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #f9f6f0;
+      border-radius: 12px;
+      flex: 1;
+    }
+    
+    .presenca-title {
+      font-size: 0.85rem;
+      color: #8b7355;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .presenca-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    
+    .presenca-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem;
+      background: white;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      border-left: 3px solid #c19a6b;
+    }
+    
+    .presenca-left {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex: 1;
+    }
+    
+    .presenca-numero {
+      font-weight: 700;
+      color: #c19a6b;
+      min-width: 24px;
+      text-align: center;
+    }
+    
+    .presenca-nome {
+      color: #2c2c2c;
+      font-weight: 500;
+    }
+    
+    .presenca-vazio {
+      text-align: center;
+      color: #b8a89a;
+      font-size: 0.9rem;
+      padding: 1rem;
+      font-style: italic;
+    }
+    
+    .btn-cancelar {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+      background: #e85d5d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .btn-cancelar:hover {
+      background: #d64545;
+      transform: scale(1.05);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: auto;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn.primary {
+      background: linear-gradient(135deg, #a8d5ba, #7ec8a3);
+      color: white;
+      box-shadow: 0 4px 12px rgba(124, 200, 163, 0.2);
+    }
+    
+    .btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(124, 200, 163, 0.3);
+    }
+    
+    .btn.primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn.export {
+      background: linear-gradient(135deg, #b89968, #c9a876);
+      color: white;
+      box-shadow: 0 4px 12px rgba(193, 154, 107, 0.2);
+    }
+    
+    .btn.export:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(193, 154, 107, 0.3);
+    }
+    
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.3s;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.4s ease-out;
+    }
+    
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #2c2c2c;
+      margin-bottom: 0.5rem;
+    }
+    
+    .modal-subtitle {
+      font-size: 0.95rem;
+      color: #8b7355;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2c2c2c;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem;
+      border: 2px solid #e8dcc8;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #c19a6b;
+      background: #fafaf8;
+    }
+    
+    .form-group input:disabled {
+      background: #f5f0e8;
+      cursor: not-allowed;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .modal-actions button {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .modal-actions button:first-child {
+      background: linear-gradient(135deg, #a8d5ba, #7ec8a3);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .modal-actions button:first-child:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(124, 200, 163, 0.3);
+    }
+    
+    .modal-actions button:last-child {
+      background: #f5f0e8;
+      color: #6b5944;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .modal-actions button:last-child:hover {
+      background: #eae5dd;
+    }
+    
+    .alert {
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    
+    .alert.success {
+      background: #d4f1e4;
+      color: #1a6b47;
+      border-left: 4px solid #7ec8a3;
+    }
+    
+    .alert.error {
+      background: #fde4e4;
+      color: #8b2a2a;
+      border-left: 4px solid #e85d5d;
+    }
+    
+    .confirm-text {
+      background: #fde4e4;
+      border-left: 4px solid #e85d5d;
+      color: #8b2a2a;
+      padding: 1rem;
+      border-radius: 10px;
+      margin: 1.5rem 0;
+      font-weight: 500;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f5f0e8;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #c19a6b;
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b8945e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <h1>Esta cortesia é sua!</h1>
+      <p class="subtitle">Um presente Dalmóbile para você</p>
+      <p class="description">
+        Aulas de Cerâmica com Alexandre Vilaça<br>
+        A Dalmóbile abre as portas do seu espaço para uma colaboração especial com o ceramista Alexandre Vilaça. 
+        Este curso foi desenhado para quem busca compreender os processos de modelagem, queima e acabamento.
+      </p>
+    </div>
+    
+    <!-- INFO BANNER -->
+    <div class="info-banner">
+      <div class="info-item">
+        <div class="info-label">📍 Endereço</div>
+        <div class="info-value">Casa Shopping - Dalmobile (Bloco M)</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">⏰ Horários</div>
+        <div class="info-value">Terças às 16h | Sábados às 11h</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">📅 Duração</div>
+        <div class="info-value">3 meses</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">👥 Capacidade</div>
+        <div class="info-value">6 alunos por aula</div>
+      </div>
+    </div>
+    
+    <!-- ESTATÍSTICAS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total de aulas</div>
+        <div class="stat-value" id="total-aulas">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Vagas preenchidas</div>
+        <div class="stat-value" id="total-inscricoes">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Aulas lotadas</div>
+        <div class="stat-value" id="aulas-lotadas">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Taxa ocupação</div>
+        <div class="stat-value" id="taxa-ocupacao">0%</div>
+      </div>
+    </div>
+    
+    <!-- FILTROS -->
+    <div class="controls">
+      <button class="filter-btn active" data-filter="all">Todas as aulas</button>
+      <button class="filter-btn" data-filter="disponivel">Vagas disponíveis</button>
+      <button class="filter-btn" data-filter="lotada">Lotadas</button>
+      <button class="filter-btn" data-filter="terca">Terças</button>
+      <button class="filter-btn" data-filter="sabado">Sábados</button>
+    </div>
+    
+    <!-- CALENDÁRIO DE AULAS -->
+    <div class="calendar" id="calendar"></div>
+  </div>
+  
+  <!-- MODAL DE RESERVA -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2>Reservar sua vaga</h2>
+      <p class="modal-subtitle">Preencha as informações para prosseguir com sua reserva</p>
+      <div id="alertContainer"></div>
+      <form id="reservaForm">
+        <div class="form-group">
+          <label>Nome completo</label>
+          <input type="text" id="nomeAluno" required placeholder="Seu nome completo">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="emailAluno" required placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="tel" id="telefoneAluno" required placeholder="(11) 99999-9999">
+        </div>
+        <div class="form-group">
+          <label>Aula selecionada</label>
+          <input type="text" id="aulaData" disabled>
+        </div>
+        <div class="modal-actions">
+          <button type="submit">Confirmar reserva</button>
+          <button type="button" onclick="fecharModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE CANCELAMENTO -->
+  <div class="modal-overlay" id="modalCancelamentoOverlay">
+    <div class="modal">
+      <h2>Cancelar reserva</h2>
+      <div id="cancelamentoContent"></div>
+      <div class="modal-actions">
+        <button onclick="confirmarCancelamento()">Sim, cancelar</button>
+        <button onclick="fecharModalCancelamento()" type="button">Não, voltar</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const CAPACIDADE = 6;
+    const MESES = 3;
+    
+    let aulas = [];
+    let filtroAtual = 'all';
+    let alunoEmCancelamento = null;
+    let aulaEmCancelamento = null;
+    
+    function gerarAulas() {
+      aulas = [];
+      
+      // Primeira terça: 18/04/2025
+      const dataTercaInicial = new Date(2025, 3, 18);
+      // Primeiro sábado: 21/04/2025
+      const dataSabadoInicial = new Date(2025, 3, 21);
+      
+      // Data final: 3 meses a partir de 18 de abril
+      const dataFim = new Date(2025, 6, 18);
+      
+      // Criar array com todas as datas
+      const todasAulas = [];
+      
+      // Gerar terças
+      let dataTerca = new Date(dataTercaInicial);
+      while (dataTerca <= dataFim) {
+        todasAulas.push({
+          id: dataTerca.getTime(),
+          data: new Date(dataTerca),
+          dia: dataTerca.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+          diaLabel: dataTerca.toLocaleDateString('pt-BR', { weekday: 'long' }).charAt(0).toUpperCase() + dataTerca.toLocaleDateString('pt-BR', { weekday: 'long' }).slice(1),
+          horario: '16:00',
+          alunos: []
+        });
+        dataTerca.setDate(dataTerca.getDate() + 7);
+      }
+      
+      // Gerar sábados
+      let dataSabado = new Date(dataSabadoInicial);
+      while (dataSabado <= dataFim) {
+        todasAulas.push({
+          id: dataSabado.getTime(),
+          data: new Date(dataSabado),
+          dia: dataSabado.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+          diaLabel: dataSabado.toLocaleDateString('pt-BR', { weekday: 'long' }).charAt(0).toUpperCase() + dataSabado.toLocaleDateString('pt-BR', { weekday: 'long' }).slice(1),
+          horario: '11:00',
+          alunos: []
+        });
+        dataSabado.setDate(dataSabado.getDate() + 7);
+      }
+      
+      // Ordenar cronologicamente
+      aulas = todasAulas.sort((a, b) => a.data - b.data);
+    }
+    
+    function atualizarEstatisticas() {
+      const totalInscricoes = aulas.reduce((acc, aula) => acc + aula.alunos.length, 0);
+      const aulasLotadas = aulas.filter(aula => aula.alunos.length >= CAPACIDADE).length;
+      const taxaOcupacao = aulas.length > 0 ? Math.round((totalInscricoes / (aulas.length * CAPACIDADE)) * 100) : 0;
+      
+      document.getElementById('total-aulas').textContent = aulas.length;
+      document.getElementById('total-inscricoes').textContent = totalInscricoes;
+      document.getElementById('aulas-lotadas').textContent = aulasLotadas;
+      document.getElementById('taxa-ocupacao').textContent = taxaOcupacao + '%';
+    }
+    
+    function renderizarAulas() {
+      const calendar = document.getElementById('calendar');
+      calendar.innerHTML = '';
+      
+      let aulasExibidas = aulas;
+      
+      if (filtroAtual === 'disponivel') {
+        aulasExibidas = aulas.filter(a => a.alunos.length < CAPACIDADE);
+      } else if (filtroAtual === 'lotada') {
+        aulasExibidas = aulas.filter(a => a.alunos.length >= CAPACIDADE);
+      } else if (filtroAtual === 'terca') {
+        aulasExibidas = aulas.filter(a => a.horario === '16:00');
+      } else if (filtroAtual === 'sabado') {
+        aulasExibidas = aulas.filter(a => a.horario === '11:00');
+      }
+      
+      if (aulasExibidas.length === 0) {
+        calendar.innerHTML = '<p style="color: #8b7355; text-align: center; grid-column: 1/-1; padding: 2rem;">Nenhuma aula encontrada para este filtro.</p>';
+        return;
+      }
+      
+      let delay = 0;
+      aulasExibidas.forEach((aula, index) => {
+        const ocupacao = aula.alunos.length;
+        const estaLotada = ocupacao >= CAPACIDADE;
+        
+        const card = document.createElement('div');
+        card.className = `class-card ${estaLotada ? 'full' : ''}`;
+        card.style.animationDelay = (delay * 0.1) + 's';
+        
+        let cardHTML = `
+          <div class="card-header">
+            <div class="card-date-info">
+              <div class="card-date">${aula.dia}</div>
+              <div class="card-day">${aula.diaLabel}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div class="card-time">${aula.horario}</div>
+              <div class="card-status">${ocupacao}/${CAPACIDADE}</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="occupancy-section">
+              <div class="occupancy-title">Ocupação</div>
+              <div class="occupancy-bar">
+        `;
+        
+        for (let i = 0; i < CAPACIDADE; i++) {
+          cardHTML += `<div class="slot ${i < ocupacao ? 'occupied' : ''}"></div>`;
+        }
+        
+        cardHTML += `
+              </div>
+              <div class="occupancy-text">${ocupacao} de ${CAPACIDADE} vagas preenchidas</div>
+            </div>
+            
+            <div class="presenca-section">
+              <div class="presenca-title">Inscritos</div>
+              <div class="presenca-list">
+        `;
+        
+        if (aula.alunos.length > 0) {
+          aula.alunos.forEach((aluno, idx) => {
+            cardHTML += `
+              <div class="presenca-item">
+                <div class="presenca-left">
+                  <div class="presenca-numero">${idx + 1}</div>
+                  <div class="presenca-nome">${aluno.nome}</div>
+                </div>
+                <button class="btn-cancelar" onclick="abrirModalCancelamento(${aula.id}, ${idx})">×</button>
+              </div>
+            `;
+          });
+        } else {
+          cardHTML += `<div class="presenca-vazio">Nenhum aluno inscrito</div>`;
+        }
+        
+        cardHTML += `
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="btn primary ${estaLotada ? '' : ''}" 
+                      onclick="abrirModal(${aula.id})" 
+                      ${estaLotada ? 'disabled' : ''}>
+                ${estaLotada ? '✓ Lotada' : '+ Reservar'}
+              </button>
+        `;
+        
+        if (index === 0) {
+          cardHTML += `<button class="btn export" onclick="exportarAula(${aula.id})">Exportar</button>`;
+        }
+        
+        cardHTML += `</div></div>`;
+        
+        card.innerHTML = cardHTML;
+        calendar.appendChild(card);
+        delay++;
+      });
+    }
+    
+    let aulaEmEdicao = null;
+    
+    function abrirModal(aulaId) {
+      aulaEmEdicao = aulas.find(a => a.id === aulaId);
+      if (!aulaEmEdicao || aulaEmEdicao.alunos.length >= CAPACIDADE) return;
+      
+      const dataFormatada = `${aulaEmEdicao.dia} - ${aulaEmEdicao.horario}`;
+      document.getElementById('aulaData').value = dataFormatada;
+      document.getElementById('nomeAluno').value = '';
+      document.getElementById('emailAluno').value = '';
+      document.getElementById('telefoneAluno').value = '';
+      document.getElementById('alertContainer').innerHTML = '';
+      document.getElementById('modalOverlay').classList.add('active');
+      document.getElementById('nomeAluno').focus();
+    }
+    
+    function fecharModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      aulaEmEdicao = null;
+    }
+
+    function abrirModalCancelamento(aulaId, indexAluno) {
+      aulaEmCancelamento = aulas.find(a => a.id === aulaId);
+      alunoEmCancelamento = aulaEmCancelamento.alunos[indexAluno];
+      
+      const conteudo = `
+        <div class="confirm-text">
+          <strong>${alunoEmCancelamento.nome}</strong> será removido da aula de <strong>${aulaEmCancelamento.dia}</strong>
+        </div>
+      `;
+      
+      document.getElementById('cancelamentoContent').innerHTML = conteudo;
+      document.getElementById('modalCancelamentoOverlay').classList.add('active');
+    }
+
+    function fecharModalCancelamento() {
+      document.getElementById('modalCancelamentoOverlay').classList.remove('active');
+      alunoEmCancelamento = null;
+      aulaEmCancelamento = null;
+    }
+
+    function confirmarCancelamento() {
+      if (!aulaEmCancelamento || !alunoEmCancelamento) return;
+      
+      const index = aulaEmCancelamento.alunos.findIndex(a => a.email === alunoEmCancelamento.email);
+      if (index !== -1) {
+        aulaEmCancelamento.alunos.splice(index, 1);
+      }
+      
+      fecharModalCancelamento();
+      atualizarEstatisticas();
+      renderizarAulas();
+    }
+    
+    document.getElementById('reservaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const nome = document.getElementById('nomeAluno').value.trim();
+      const email = document.getElementById('emailAluno').value.trim();
+      const telefone = document.getElementById('telefoneAluno').value.trim();
+      
+      if (!nome || !email || !telefone) {
+        mostrarAlerta('Por favor, preencha todos os campos.', 'error');
+        return;
+      }
+      
+      const jaInscrito = aulaEmEdicao.alunos.some(a => a.email === email);
+      if (jaInscrito) {
+        mostrarAlerta('Este email já está inscrito nesta aula.', 'error');
+        return;
+      }
+      
+      aulaEmEdicao.alunos.push({
+        nome: nome,
+        email: email,
+        telefone: telefone,
+        dataInscricao: new Date()
+      });
+      
+      mostrarAlerta('Reserva realizada com sucesso!', 'success');
+      
+      setTimeout(() => {
+        fecharModal();
+        atualizarEstatisticas();
+        renderizarAulas();
+      }, 1500);
+    });
+    
+    function mostrarAlerta(mensagem, tipo) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert ${tipo}`;
+      alertDiv.textContent = mensagem;
+      document.getElementById('alertContainer').innerHTML = '';
+      document.getElementById('alertContainer').appendChild(alertDiv);
+    }
+    
+    function exportarAula(aulaId) {
+      const aula = aulas.find(a => a.id === aulaId);
+      if (!aula) return;
+      
+      let csv = 'Data,Horário,Nº,Nome,Email,Telefone,Data da Inscrição\n';
+      aula.alunos.forEach((aluno, index) => {
+        const data = aluno.dataInscricao ? new Date(aluno.dataInscricao).toLocaleDateString('pt-BR') : '-';
+        csv += `${aula.dia},${aula.horario},${index + 1},"${aluno.nome}","${aluno.email}","${aluno.telefone}","${data}"\n`;
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `aula-${aula.dia.replace(/\//g, '-')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        filtroAtual = this.dataset.filter;
+        renderizarAulas();
+      });
+    });
+    
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) fecharModal();
+    });
+
+    document.getElementById('modalCancelamentoOverlay').addEventListener('click', function(e) {
+      if (e.target === this) fecharModalCancelamento();
+    });
+    
+    gerarAulas();
+    atualizarEstatisticas();
+    renderizarAulas();
+  </script>
+</body>
+</html>

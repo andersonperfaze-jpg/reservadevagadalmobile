@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - Confirmação de Presença</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f0e8 0%, #ede4d3 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: #2c2c2c;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header .subtitle {
+      font-size: 1.1rem;
+      color: #8b7355;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: #8b7355;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #c19a6b, #d4a574);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn-action {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .btn-export {
+      background: linear-gradient(135deg, #b89968, #c9a876);
+      color: white;
+    }
+    
+    .btn-export:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(193, 154, 107, 0.3);
+    }
+    
+    .btn-limpar {
+      background: #fde4e4;
+      color: #8b2a2a;
+      border: 2px solid #e85d5d;
+    }
+    
+    .btn-limpar:hover {
+      background: #f5d5d5;
+    }
+    
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    thead {
+      background: linear-gradient(135deg, #c19a6b, #d4a574);
+      color: white;
+    }
+    
+    th {
+      padding: 1.2rem;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
+    
+    td {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid #e8dcc8;
+    }
+    
+    tbody tr:hover {
+      background: #f9f6f0;
+    }
+    
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .nome {
+      font-weight: 600;
+      color: #2c2c2c;
+    }
+    
+    .email {
+      color: #6b5944;
+      font-size: 0.9rem;
+    }
+    
+    .status {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    
+    .status.confirmado {
+      background: #d4f1e4;
+      color: #1a6b47;
+    }
+    
+    .status.nao-confirmado {
+      background: #fde4e4;
+      color: #8b2a2a;
+    }
+    
+    .status.pendente {
+      background: #fef3cd;
+      color: #856404;
+    }
+    
+    .data-hora {
+      color: #8b7355;
+      font-size: 0.9rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #8b7355;
+    }
+    
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #2c2c2c;
+      margin-bottom: 1rem;
+    }
+    
+    .modal p {
+      color: #6b5944;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .modal-actions button {
+      flex: 1;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .modal-actions .btn-sim {
+      background: #e85d5d;
+      color: white;
+    }
+    
+    .modal-actions .btn-nao {
+      background: #f5f0e8;
+      color: #6b5944;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Painel Administrativo</h1>
+      <p class="subtitle">Confirmações de Presença - Aula de 28/04/2025</p>
+    </div>
+    
+    <!-- ESTATÍSTICAS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total de Alunos</div>
+        <div class="stat-value" id="totalAlunos">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Confirmados</div>
+        <div class="stat-value" id="confirmados" style="color: #7ec8a3;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Não Confirmados</div>
+        <div class="stat-value" id="naoConfirmados" style="color: #e85d5d;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pendentes</div>
+        <div class="stat-value" id="pendentes" style="color: #f59e0b;">0</div>
+      </div>
+    </div>
+    
+    <!-- CONTROLES -->
+    <div class="controls">
+      <button class="btn-action btn-export" onclick="exportarCSV()">📊 Exportar para CSV</button>
+      <button class="btn-action btn-limpar" onclick="abrirModalLimpar()">🗑️ Limpar Dados</button>
+    </div>
+    
+    <!-- TABELA -->
+    <div class="table-container">
+      <table id="tabelaPresencas">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabela">
+          <tr>
+            <td colspan="4" class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <p>Nenhuma resposta ainda. Os alunos começarão a confirmar suas presenças em breve.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- MODAL DE CONFIRMAÇÃO -->
+  <div class="modal-overlay" id="modalLimpar">
+    <div class="modal">
+      <h2>Limpar Dados</h2>
+      <p>Tem certeza que deseja limpar todas as confirmações de presença? Esta ação não pode ser desfeita.</p>
+      <div class="modal-actions">
+        <button class="btn-sim" onclick="confirmarLimpar()">Sim, limpar</button>
+        <button class="btn-nao" onclick="fecharModalLimpar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+        const alunos = [
+      { nome: 'Patricia Chambela', email: 'patricia@chambela.com.br' },
+      { nome: 'Ana Beatriz Dantas', email: 'anasouzadantas@hotmail.com' },
+      { nome: 'Christine Luzes', email: 'christineluzes.calbstudio@gmail.com' },
+      { nome: 'Gabriela Moraro', email: 'gabimoraro.arq@gmail.com' },
+      { nome: 'Carol Balthor', email: 'carol@arcstudio.com.br' },
+      { nome: 'Katherine M.Fernández', email: 'kte.fernandez@gmail.com' },
+      { nome: 'Bianca', email: 'biancamnocera@gmail.com' },
+      { nome: 'Mariana Gaspar Valério', email: 'mariana.gaspar25@gmail.com' },
+      { nome: 'Thais Domakosky', email: 'domakoskythais@gmail.com' },
+      { nome: 'Patricia Malizia', email: 'pmgmalizia@gmail.com' }
+    ];
+    
+    let respostas = [];
+    
+    function carregarDados() {
+      const dados = localStorage.getItem('confirmacoes_28abril');
+      if (dados) {
+        respostas = JSON.parse(dados);
+      }
+      atualizarTabela();
+      atualizarEstatisticas();
+    }
+    
+    function salvarDados() {
+      localStorage.setItem('confirmacoes_28abril', JSON.stringify(respostas));
+      atualizarTabela();
+      atualizarEstatisticas();
+    }
+    
+    function adicionarResposta(nome, email, status) {
+      const jaExiste = respostas.findIndex(r => r.email === email);
+      const agora = new Date().toLocaleString('pt-BR');
+      
+      if (jaExiste !== -1) {
+        respostas[jaExiste] = { nome, email, status, dataHora: agora };
+      } else {
+        respostas.push({ nome, email, status, dataHora: agora });
+      }
+      
+      salvarDados();
+    }
+    
+    function atualizarTabela() {
+      const tbody = document.getElementById('corpoTabela');
+      
+      if (respostas.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="3" class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <p>Nenhuma resposta ainda. Os alunos começarão a confirmar suas presenças em breve.</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = respostas.map(resposta => `
+        <tr>
+          <td><div class="nome">${resposta.nome}</div></td>
+          <td><div class="email">${resposta.email}</div></td>
+          <td>
+            <span class="status ${resposta.status === 'confirmado' ? 'confirmado' : 'nao-confirmado'}">
+              ${resposta.status === 'confirmado' ? '✓ Confirmado' : '✗ Não Confirmado'}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    }
+    
+    function atualizarEstatisticas() {
+      const confirmados = respostas.filter(r => r.status === 'confirmado').length;
+      const naoConfirmados = respostas.filter(r => r.status === 'nao-confirmado').length;
+      const pendentes = alunos.length - respostas.length;
+      
+      document.getElementById('totalAlunos').textContent = alunos.length;
+      document.getElementById('confirmados').textContent = confirmados;
+      document.getElementById('naoConfirmados').textContent = naoConfirmados;
+      document.getElementById('pendentes').textContent = pendentes;
+    }
+    
+    function exportarCSV() {
+      let csv = 'Nome,Email,Status\n';
+      
+      respostas.forEach(resposta => {
+        const status = resposta.status === 'confirmado' ? 'Confirmado' : 'Não Confirmado';
+        csv += `"${resposta.nome}","${resposta.email}","${status}"\n`;
+      });
+      
+      // Adicionar alunos sem resposta
+      alunos.forEach(aluno => {
+        if (!respostas.find(r => r.email === aluno.email)) {
+          csv += `"${aluno.nome}","${aluno.email}","Pendente"\n`;
+        }
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `presencas_28abril_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    function abrirModalLimpar() {
+      document.getElementById('modalLimpar').classList.add('active');
+    }
+    
+    function fecharModalLimpar() {
+      document.getElementById('modalLimpar').classList.remove('active');
+    }
+    
+    function confirmarLimpar() {
+      respostas = [];
+      localStorage.removeItem('confirmacoes_28abril');
+      atualizarTabela();
+      atualizarEstatisticas();
+      fecharModalLimpar();
+    }
+    
+    // Função para receber dados do formulário de confirmação
+    window.receberConfirmacao = function(nome, email, status) {
+      adicionarResposta(nome, email, status);
+    };
+    
+    // Carregar dados ao iniciar
+    carregarDados();
+    
+    // Atualizar a cada 5 segundos
+    setInterval(carregarDados, 5000);
+  </script>
+</body>
+</html>

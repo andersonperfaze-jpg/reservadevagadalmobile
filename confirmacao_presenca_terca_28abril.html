@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Presença - Terça 28/04</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f0e8 0%, #ede4d3 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 600px;
+      width: 100%;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: slideUp 0.6s ease-out;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: #2c2c2c;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header .subtitle {
+      font-size: 1.1rem;
+      color: #8b7355;
+      font-weight: 500;
+    }
+    
+    .aula-info {
+      background: linear-gradient(135deg, #d4a574 0%, #c19a6b 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .aula-data {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .aula-horario {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    
+    .form-group {
+      margin-bottom: 2rem;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2c2c2c;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e8dcc8;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .form-group select:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: #c19a6b;
+      background: #fafaf8;
+    }
+    
+    .form-group select {
+      cursor: pointer;
+    }
+    
+    .form-group input:disabled {
+      background: #f5f0e8;
+      color: #6b5944;
+      cursor: not-allowed;
+    }
+    
+    .confirmation-section {
+      background: #f9f6f0;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border-left: 4px solid #c19a6b;
+    }
+    
+    .confirmation-question {
+      font-size: 1.1rem;
+      color: #2c2c2c;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .btn {
+      padding: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn.confirm {
+      background: linear-gradient(135deg, #a8d5ba, #7ec8a3);
+      color: white;
+      box-shadow: 0 4px 12px rgba(124, 200, 163, 0.2);
+    }
+    
+    .btn.confirm:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(124, 200, 163, 0.3);
+    }
+    
+    .btn.confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn.deny {
+      background: #fde4e4;
+      color: #8b2a2a;
+      border: 2px solid #e85d5d;
+      box-shadow: 0 4px 12px rgba(232, 93, 93, 0.1);
+    }
+    
+    .btn.deny:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: #f5d5d5;
+      box-shadow: 0 6px 16px rgba(232, 93, 93, 0.2);
+    }
+    
+    .btn.deny:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .alert {
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      display: none;
+    }
+    
+    .alert.success {
+      background: #d4f1e4;
+      color: #1a6b47;
+      border-left: 4px solid #7ec8a3;
+      display: block;
+    }
+    
+    .alert.error {
+      background: #fde4e4;
+      color: #8b2a2a;
+      border-left: 4px solid #e85d5d;
+      display: block;
+    }
+    
+    .info-box {
+      background: #f5f0e8;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #6b5944;
+      line-height: 1.6;
+      text-align: center;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .card {
+        padding: 1.5rem;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>Confirme sua Presença</h1>
+        <p class="subtitle">Aula de Cerâmica - 28 de Abril</p>
+      </div>
+      
+      <div class="aula-info">
+        <div class="aula-data">28 de Abril de 2025</div>
+        <div class="aula-horario">Terça-feira • 16:00</div>
+      </div>
+      
+      <div id="alertContainer"></div>
+      
+      <form id="presencaForm">
+        <div class="form-group">
+          <label>Selecione seu Nome</label>
+          <select id="nomeAluno" required onchange="preencherEmail()">
+            <option value="">-- Escolha seu nome --</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="emailAluno" disabled>
+        </div>
+        
+        <div class="confirmation-section">
+          <div class="confirmation-question">
+            Você vai comparecer à aula?
+          </div>
+          
+          <div class="button-group">
+            <button type="button" class="btn confirm" id="btnConfirm" onclick="confirmarPresenca()" disabled>
+              ✓ Sim, Vou!
+            </button>
+            <button type="button" class="btn deny" id="btnDeny" onclick="cancelarPresenca()" disabled>
+              ✗ Não Posso
+            </button>
+          </div>
+        </div>
+      </form>
+      
+      <div class="info-box">
+        <strong>📌 Importante:</strong> Confirme sua presença para que possamos organizar melhor a aula. Se não conseguir comparecer, nos avise com antecedência.
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // APENAS ALUNOS DE TERÇA (28/04)
+    const alunos = [
+      { nome: 'Patricia Chambela', email: 'patricia@chambela.com.br' },
+      { nome: 'Gabriela Moraro', email: 'gabimoraro.arq@gmail.com' },
+      { nome: 'Carol Balthor', email: 'carol@arcstudio.com.br' },
+      { nome: 'Katherine M.Fernández', email: 'kte.fernandez@gmail.com' },
+      { nome: 'Bianca', email: 'biancamnocera@gmail.com' },
+      { nome: 'Mariana Gaspar Valério', email: 'mariana.gaspar25@gmail.com' },
+      { nome: 'Patricia Malizia', email: 'pmgmalizia@gmail.com' }
+    ];
+    
+    function inicializarSelect() {
+      const select = document.getElementById('nomeAluno');
+      alunos.forEach(aluno => {
+        const option = document.createElement('option');
+        option.value = aluno.email;
+        option.textContent = aluno.nome;
+        select.appendChild(option);
+      });
+    }
+    
+    function preencherEmail() {
+      const select = document.getElementById('nomeAluno');
+      const emailInput = document.getElementById('emailAluno');
+      const btnConfirm = document.getElementById('btnConfirm');
+      const btnDeny = document.getElementById('btnDeny');
+      
+      if (select.value) {
+        emailInput.value = select.value;
+        btnConfirm.disabled = false;
+        btnDeny.disabled = false;
+      } else {
+        emailInput.value = '';
+        btnConfirm.disabled = true;
+        btnDeny.disabled = true;
+      }
+    }
+    
+    function mostrarAlerta(mensagem, tipo) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert ${tipo}`;
+      alertDiv.textContent = mensagem;
+      const container = document.getElementById('alertContainer');
+      container.innerHTML = '';
+      container.appendChild(alertDiv);
+      
+      setTimeout(() => {
+        alertDiv.style.display = 'none';
+      }, 5000);
+    }
+    
+    function salvarNoStorage(nome, email, status) {
+      const respostas = JSON.parse(localStorage.getItem('confirmacoes_28abril') || '[]');
+      const jaExiste = respostas.findIndex(r => r.email === email);
+      const agora = new Date().toLocaleString('pt-BR');
+      
+      if (jaExiste !== -1) {
+        respostas[jaExiste] = { nome, email, status, dataHora: agora };
+      } else {
+        respostas.push({ nome, email, status, dataHora: agora });
+      }
+      
+      localStorage.setItem('confirmacoes_28abril', JSON.stringify(respostas));
+      console.log('Resposta salva:', { nome, email, status });
+    }
+    
+    function confirmarPresenca() {
+      const nome = document.getElementById('nomeAluno');
+      const email = document.getElementById('emailAluno').value;
+      
+      if (!nome.value) {
+        mostrarAlerta('Por favor, selecione seu nome.', 'error');
+        return;
+      }
+      
+      const nomeCompleto = nome.options[nome.selectedIndex].text;
+      salvarNoStorage(nomeCompleto, email, 'confirmado');
+      
+      mostrarAlerta('✓ Sua presença foi confirmada! Até terça-feira!', 'success');
+      
+      setTimeout(() => {
+        document.getElementById('presencaForm').reset();
+        document.getElementById('emailAluno').value = '';
+        document.getElementById('btnConfirm').disabled = true;
+        document.getElementById('btnDeny').disabled = true;
+      }, 2000);
+    }
+    
+    function cancelarPresenca() {
+      const nome = document.getElementById('nomeAluno');
+      const email = document.getElementById('emailAluno').value;
+      
+      if (!nome.value) {
+        mostrarAlerta('Por favor, selecione seu nome.', 'error');
+        return;
+      }
+      
+      const nomeCompleto = nome.options[nome.selectedIndex].text;
+      salvarNoStorage(nomeCompleto, email, 'nao-confirmado');
+      
+      mostrarAlerta('Entendemos. Você foi removido da lista para esta aula. Até a próxima!', 'error');
+      
+      setTimeout(() => {
+        document.getElementById('presencaForm').reset();
+        document.getElementById('emailAluno').value = '';
+        document.getElementById('btnConfirm').disabled = true;
+        document.getElementById('btnDeny').disabled = true;
+      }, 2000);
+    }
+    
+    window.addEventListener('DOMContentLoaded', inicializarSelect);
+  </script>
+</body>
+</html>
